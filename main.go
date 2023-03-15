@@ -6,7 +6,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/Shyp/bump_version/lib"
+	bump_version "github.com/snarky-puppy/bump_version/lib"
 )
 
 const VERSION = "1.3"
@@ -26,6 +26,10 @@ func runCommand(binary string, args ...string) {
 }
 
 var vsn = flag.String("version", "", "Set this version in the file (don't increment whatever version is present)")
+
+func commitMsg(version string) string {
+	return fmt.Sprintf("Version %s [skip ci]", version)
+}
 
 func main() {
 	flag.Usage = usage
@@ -67,7 +71,7 @@ func main() {
 		}
 	}
 	runCommand("git", "add", filename)
-	runCommand("git", "commit", "-m", version.String())
+	runCommand("git", "commit", "-m", commitMsg(version.String()))
 	runCommand("git", "tag", version.String(), "--annotate", "--message", version.String())
 	os.Stdout.WriteString(version.String() + "\n")
 }
