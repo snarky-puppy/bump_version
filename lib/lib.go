@@ -26,11 +26,11 @@ type Version struct {
 
 func (v *Version) String() string {
 	if v.Major >= 0 && v.Minor >= 0 && v.Patch >= 0 {
-		return fmt.Sprintf("%d.%d.%d", v.Major, v.Minor, v.Patch)
+		return fmt.Sprintf("v%d.%d.%d", v.Major, v.Minor, v.Patch)
 	} else if v.Major >= 0 && v.Minor >= 0 {
-		return fmt.Sprintf("%d.%d", v.Major, v.Minor)
+		return fmt.Sprintf("v%d.%d", v.Major, v.Minor)
 	} else if v.Major >= 0 {
-		return fmt.Sprintf("%d", v.Major)
+		return fmt.Sprintf("v%d", v.Major)
 	} else {
 		return "%!s(INVALID_VERSION)"
 	}
@@ -46,7 +46,12 @@ func Parse(version string) (*Version, error) {
 	if len(version) == 0 {
 		return nil, errors.New("Empty version string")
 	}
-
+	if version[0] == 'v' {
+		version = version[1:]
+	}
+	if len(version) == 0 {
+		return nil, errors.New("Empty version string")
+	}
 	parts := strings.SplitN(version, ".", 3)
 	if len(parts) == 1 {
 		major, err := strconv.ParseInt(parts[0], 10, 64)
