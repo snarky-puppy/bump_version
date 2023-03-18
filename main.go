@@ -9,7 +9,7 @@ import (
 	bump_version "github.com/snarky-puppy/bump_version/lib"
 )
 
-const VERSION = "v1.4"
+const VERSION = "v1.4.0"
 
 func usage() {
 	fmt.Fprintf(os.Stderr, "Usage: bump_version [--version=<version>] [<major|minor|patch>] <filename>\n")
