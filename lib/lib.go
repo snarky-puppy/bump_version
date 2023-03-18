@@ -43,14 +43,9 @@ func (v *Version) String() string {
 // If a field is omitted from the string version (e.g. "0.2"), it's stored in
 // the Version string as the integer -1.
 func Parse(version string) (*Version, error) {
+	version = strings.TrimPrefix(version, "v")
 	if len(version) == 0 {
-		return nil, errors.New("Empty version string")
-	}
-	if version[0] == 'v' {
-		version = version[1:]
-	}
-	if len(version) == 0 {
-		return nil, errors.New("Empty version string")
+		return nil, errors.New("empty version string")
 	}
 	parts := strings.SplitN(version, ".", 3)
 	if len(parts) == 1 {
@@ -99,7 +94,7 @@ func Parse(version string) (*Version, error) {
 			Patch: patch,
 		}, nil
 	}
-	return nil, fmt.Errorf("Invalid version string: %s", version)
+	return nil, fmt.Errorf("invalid version string: %s", version)
 }
 
 // changeVersion takes a basic literal representing a string version, and
@@ -132,7 +127,7 @@ func changeVersion(vtype VersionType, value string) (*Version, error) {
 		}
 		version.Patch++
 	} else {
-		return nil, fmt.Errorf("Invalid version type: %s", vtype)
+		return nil, fmt.Errorf("invalid version type: %s", vtype)
 	}
 	return version, nil
 }
@@ -148,7 +143,7 @@ func findBasicLit(file *ast.File) (*ast.BasicLit, error) {
 			if strings.ToUpper(spec.Names[0].Name) == "VERSION" {
 				value, ok := spec.Values[0].(*ast.BasicLit)
 				if !ok || value.Kind != token.STRING {
-					return nil, fmt.Errorf("VERSION is not a string, was %#v\n", value.Value)
+					return nil, fmt.Errorf("VERSION is not a string, was %#v", value.Value)
 				}
 				return value, nil
 			}
@@ -177,7 +172,7 @@ func changeInFile(filename string, f func(*ast.BasicLit) error) error {
 	}
 	lit, err := findBasicLit(parsedFile)
 	if err != nil {
-		return fmt.Errorf("No Version const found in %s", filename)
+		return fmt.Errorf("no Version const found in %s", filename)
 	}
 	if err := f(lit); err != nil {
 		return err
